@@ -151,7 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 5679155321427008534, guid: 57034d3fe539665458301ab857f4ecd6, type: 3}
   parent: {fileID: 646161871}
-  rings: 5
+  rings: 4
   src: {fileID: 1201981928}
   maxRadius: 50
   minRadius: 15
@@ -160,7 +160,7 @@ MonoBehaviour:
   range: 4096
   ringRotateSpeed: 0.25
   rotateSpeed: 5
-  changeColor: 1
+  changeColor: 0
   topOnly: 0
 --- !u!4 &646161873
 Transform:
