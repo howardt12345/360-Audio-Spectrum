@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 646161873}
   - component: {fileID: 646161872}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Audio Visualizer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -151,13 +151,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 5679155321427008534, guid: 57034d3fe539665458301ab857f4ecd6, type: 3}
   parent: {fileID: 646161871}
-  rings: 3
+  rings: 5
   src: {fileID: 1201981928}
-  maxRadius: 25
+  maxRadius: 50
   minRadius: 15
   yScale: 1.5
   xScale: 1.5
-  range: 2048
+  range: 4096
   ringRotateSpeed: 0.25
   rotateSpeed: 5
   changeColor: 1
