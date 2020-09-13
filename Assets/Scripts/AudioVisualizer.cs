@@ -29,10 +29,11 @@ public class AudioVisualizer : MonoBehaviour
         for (int i = 0; i < rings; i++) {
             _ringsParents[i] = new GameObject();
             _ringsParents[i].transform.parent = parent.transform;
-            _cubes[i] = new GameObject[Convert.ToInt32(Mathf.PI * (maxRadius - (i * ((maxRadius-minRadius)/(rings-1)))) * xScale)];
+            _cubes[i] = new GameObject[Convert.ToInt32(Mathf.PI * (maxRadius - ((maxRadius-minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(rings-1f), 2)))) * xScale)];
             for (int j = 0; j < _cubes[i].Length; j++) {
                 float angle = j * Mathf.PI * 2 / _cubes[i].Length;
-                Vector3 pos = new Vector3 (Mathf.Cos(angle), 0, Mathf.Sin(angle)) * (maxRadius - (i * ((maxRadius-minRadius)/(rings-1))));
+                Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) *
+                              (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(rings-1f), 2))));
                 GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
                 tmp.transform.parent = _ringsParents[i].transform;
                 _cubes[i][j] = tmp;
