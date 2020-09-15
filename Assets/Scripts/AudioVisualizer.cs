@@ -106,15 +106,15 @@ public class AudioVisualizer : MonoBehaviour
         {
             for (int j = 0; j < rings[i].cubes.Length; j++)
             {
-                GameObject.Destroy(rings[i].cubes[j]);
+                Destroy(rings[i].cubes[j]);
             }
-            GameObject.Destroy(rings[i].parent);
+            Destroy(rings[i].parent);
         }
         Generate();
     }
     #endif
 
-    private bool canRotate;
+    private bool _canRotate;
 
     private void Start ()
     {
@@ -130,7 +130,7 @@ public class AudioVisualizer : MonoBehaviour
         else
         {
             audioSource.Play();
-            canRotate = true;
+            _canRotate = true;
         }
     }
 
@@ -167,11 +167,11 @@ public class AudioVisualizer : MonoBehaviour
         Debug.Log(rings.Length + " rings generated. " + total + " cubes generated. ");
     }
     
-    IEnumerator PlaySoundAfterDelay()
+    private IEnumerator PlaySoundAfterDelay()
     {
         yield return new WaitForSeconds(delay);
         audioSource.Play();
-        canRotate = true;
+        _canRotate = true;
     }
 
     private void FixedUpdate () 
@@ -180,7 +180,7 @@ public class AudioVisualizer : MonoBehaviour
         audioSource.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
         for (int i = 0; i < rings.Length; i++) 
         {
-            if(canRotate)
+            if(_canRotate)
                 rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
             for (int j = 0; j < rings[i].cubes.Length; j++) 
             {
@@ -191,7 +191,7 @@ public class AudioVisualizer : MonoBehaviour
                     startingHue = Mathf.Clamp(startingHue, 0f, 1f);
                     rings[i].cubes[j].GetComponent<Renderer>().material.SetColor("_Color", Color.HSVToRGB(Mathf.Clamp(startingHue+(spectrum[(rings[i].cubes.Length*i) + j]*shiftFactor), 0f, 1f), 1, 1));
                 }
-                if(canRotate)
+                if(_canRotate)
                     rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
             }
         }
