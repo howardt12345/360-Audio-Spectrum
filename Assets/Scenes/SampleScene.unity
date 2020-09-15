@@ -152,6 +152,7 @@ MonoBehaviour:
   prefab: {fileID: 5679155321427008534, guid: 57034d3fe539665458301ab857f4ecd6, type: 3}
   parent: {fileID: 646161871}
   src: {fileID: 1201981928}
+  generate: 0
   ringState: 1
   radius: 15
   numberOfRings: 4
@@ -164,9 +165,17 @@ MonoBehaviour:
   rotateSpeed: 5
   topOnly: 0
   changeColor: 1
-  startingHue: 7.31
+  startingHue: 0.67
   shiftFactor: -4
-  rings: []
+  rings:
+  - parent: {fileID: 0}
+    cubes: []
+  - parent: {fileID: 0}
+    cubes: []
+  - parent: {fileID: 0}
+    cubes: []
+  - parent: {fileID: 0}
+    cubes: []
 --- !u!4 &646161873
 Transform:
   m_ObjectHideFlags: 0

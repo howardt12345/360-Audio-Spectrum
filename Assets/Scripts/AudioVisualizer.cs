@@ -37,14 +37,15 @@ public class AudioVisualizer : MonoBehaviour
     public GameObject prefab;
     public GameObject parent;
     public AudioSource src;
+    public bool generate = true;
     public RingState ringState = RingState.Single;
-    [ConditionalField("ringState", false, RingState.Single)] 
+    [ConditionalField(nameof(ringState), false, RingState.Single)] 
     public float radius = 15f;
-    [ConditionalField("ringState", false, RingState.Multiple), Min(2)] 
+    [ConditionalField(nameof(ringState), false, RingState.Multiple), Min(2)] 
     public int numberOfRings = 2;
-    [ConditionalField("ringState", false, RingState.Multiple)] 
+    [ConditionalField(nameof(ringState), false, RingState.Multiple)] 
     public float maxRadius = 20f;
-    [ConditionalField("ringState", false, RingState.Multiple)] 
+    [ConditionalField(nameof(ringState), false, RingState.Multiple)] 
     public float minRadius = 10f;
     
     public float yScale = 1f;
@@ -55,36 +56,39 @@ public class AudioVisualizer : MonoBehaviour
     public bool topOnly;
     public ColorState changeColor;
 
-    [ConditionalField("changeColor", false, ColorState.Hue), Min(0)]
+    [ConditionalField(nameof(changeColor), false, ColorState.Hue), Min(0)]
     public float startingHue = 0.67f;
 
-    [ConditionalField("changeColor", false, ColorState.Hue)]
+    [ConditionalField(nameof(changeColor), false, ColorState.Hue)]
     public float shiftFactor = -4f;
 
     public Ring[] rings;
 
     private void Start ()
     {
-        rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
-        for (int i = 0; i < rings.Length; i++)
+        if (generate)
         {
-            rings[i] = new Ring
+            rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
+            for (int i = 0; i < rings.Length; i++)
             {
-                parent = new GameObject(),
-                cubes = new GameObject[ringState == RingState.Single 
-                    ? Convert.ToInt32(Mathf.PI * radius * xScale)
-                    : Convert.ToInt32(Mathf.PI * (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i) / (numberOfRings - 1f), 2)))) * xScale)
-                ]
-            };
-            rings[i].parent.transform.parent = parent.transform;
-            for (int j = 0; j < rings[i].cubes.Length; j++) 
-            {
-                float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
-                Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) 
-                    * (ringState == RingState.Single ? radius : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2)))));
-                GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
-                tmp.transform.parent = rings[i].parent.transform;
-                rings[i].cubes[j] = tmp;
+                rings[i] = new Ring
+                {
+                    parent = new GameObject(),
+                    cubes = new GameObject[ringState == RingState.Single 
+                        ? Convert.ToInt32(Mathf.PI * radius * xScale)
+                        : Convert.ToInt32(Mathf.PI * (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i) / (numberOfRings - 1f), 2)))) * xScale)
+                    ]
+                };
+                rings[i].parent.transform.parent = parent.transform;
+                for (int j = 0; j < rings[i].cubes.Length; j++) 
+                {
+                    float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
+                    Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) 
+                                  * (ringState == RingState.Single ? radius : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2)))));
+                    GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
+                    tmp.transform.parent = rings[i].parent.transform;
+                    rings[i].cubes[j] = tmp;
+                }
             }
         }
     }
