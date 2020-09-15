@@ -86,14 +86,14 @@ public class AudioVisualizer : MonoBehaviour
             if (rings[i].parent != null)
             {
                 rings[i] = new Ring(rings[i].parent);
-                total++;
+                total += rings[i].cubes.Length;
             }
             else
             {
                 Debug.LogError("Parent at index " + i + " is null.");
             }
         }
-        return total + " cubes from " + rings.Length + " collected.";
+        return total + " cubes from " + rings.Length + " rings collected.";
     }
     #endif
 
