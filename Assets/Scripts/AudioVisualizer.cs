@@ -46,7 +46,10 @@ public class AudioVisualizer : MonoBehaviour
 {
     public GameObject prefab;
     public GameObject parent;
-    public AudioSource src;
+    public AudioSource audioSource;
+    public bool startAudioWithDelay;
+    [ConditionalField(nameof(startAudioWithDelay))]
+    public int delay = 2;
     public bool generate = true;
     [Separator]
     public RingState ringState = RingState.Single;
@@ -98,49 +101,75 @@ public class AudioVisualizer : MonoBehaviour
     }
     #endif
 
+    private bool canRotate;
+
     private void Start ()
     {
         if (generate)
         {
-            int total = 0;
-            rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
-            for (int i = 0; i < rings.Length; i++)
+            Generate();
+        }
+
+        if (startAudioWithDelay)
+        {
+            StartCoroutine(PlaySoundAfterDelay());
+        }
+        else
+        {
+            audioSource.Play();
+            canRotate = true;
+        }
+    }
+
+    private void Generate()
+    {
+        
+        int total = 0;
+        rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
+        for (int i = 0; i < rings.Length; i++)
+        {
+            rings[i] = new Ring
             {
-                rings[i] = new Ring
-                {
-                    parent = new GameObject(),
-                    cubes = new GameObject[
-                        ringState == RingState.Single 
+                parent = new GameObject(),
+                cubes = new GameObject[
+                    ringState == RingState.Single 
                         ? Convert.ToInt32(Mathf.PI * radius * xScale)
                         : Convert.ToInt32(Mathf.PI * (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i) / (numberOfRings - 1f), 2)))) * xScale)
-                    ]
-                };
-                rings[i].parent.transform.parent = parent.transform;
-                for (int j = 0; j < rings[i].cubes.Length; j++) 
-                {
-                    float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
-                    Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) 
-                      * (ringState == RingState.Single 
-                          ? radius 
-                          : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2))))
-                      );
-                    GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
-                    tmp.transform.parent = rings[i].parent.transform;
-                    rings[i].cubes[j] = tmp;
-                }
-                total += rings[i].cubes.Length;
+                ]
+            };
+            rings[i].parent.transform.parent = parent.transform;
+            for (int j = 0; j < rings[i].cubes.Length; j++) 
+            {
+                float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
+                Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) 
+                              * (ringState == RingState.Single 
+                                  ? radius 
+                                  : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2))))
+                              );
+                GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
+                tmp.transform.parent = rings[i].parent.transform;
+                rings[i].cubes[j] = tmp;
             }
-            Debug.Log(rings.Length + " rings generated. " + total + " cubes generated. ");
+            total += rings[i].cubes.Length;
         }
+        Debug.Log(rings.Length + " rings generated. " + total + " cubes generated. ");
+    }
+    
+    IEnumerator PlaySoundAfterDelay()
+    {
+        yield return new WaitForSeconds(delay);
+        audioSource.Play();
+        canRotate = true;
     }
 
     private void FixedUpdate () 
     {
         float[] spectrum = new float[range];
-        src.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
+        audioSource.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
         for (int i = 0; i < rings.Length; i++) 
         {
-            rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
+            if(canRotate)
+                rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
             for (int j = 0; j < rings[i].cubes.Length; j++) 
             {
                 rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 25 : 50), rings[i].cubes[j].transform.localScale.z);;
@@ -150,7 +179,8 @@ public class AudioVisualizer : MonoBehaviour
                     startingHue = Mathf.Clamp(startingHue, 0f, 1f);
                     rings[i].cubes[j].GetComponent<Renderer>().material.SetColor("_Color", Color.HSVToRGB(Mathf.Clamp(startingHue+(spectrum[(rings[i].cubes.Length*i) + j]*shiftFactor), 0f, 1f), 1, 1));
                 }
-                rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
+                if(canRotate)
+                    rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
             }
         }
     }

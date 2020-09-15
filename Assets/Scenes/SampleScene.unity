@@ -151,16 +151,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 5679155321427008534, guid: 57034d3fe539665458301ab857f4ecd6, type: 3}
   parent: {fileID: 646161871}
-  src: {fileID: 1201981928}
+  audioSource: {fileID: 1201981928}
+  startAudioWithDelay: 1
+  delay: 1
   generate: 1
   ringState: 1
   radius: 15
-  numberOfRings: 5
+  numberOfRings: 4
   maxRadius: 25
   minRadius: 10
   yScale: 1.5
   xScale: 1.5
-  range: 4096
+  range: 2048
   ringRotateSpeed: 0.25
   rotateSpeed: 5
   topOnly: 0
@@ -711,7 +713,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 39855fad36b60d346a12ba1f2473e6ca, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
