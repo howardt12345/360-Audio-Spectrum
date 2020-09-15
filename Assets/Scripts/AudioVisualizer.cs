@@ -4,11 +4,28 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Serialization;
 
+[Serializable]
+public class Ring
+{
+    public GameObject parent;
+    public GameObject[] cubes;
+
+    public Ring()
+    {
+    }
+
+    public Ring(GameObject parent, GameObject[] cubes)
+    {
+        this.parent = parent;
+        this.cubes = cubes;
+    }
+}
+
 public class AudioVisualizer : MonoBehaviour
 {
     public GameObject prefab;
     public GameObject parent;
-    public int rings = 1;
+    public int numberOfRings = 1;
     public AudioSource src;
     public float maxRadius = 20f;
     public float minRadius = 10f;
@@ -19,24 +36,30 @@ public class AudioVisualizer : MonoBehaviour
     public float rotateSpeed;
     public bool changeColor;
     public bool topOnly;
-    
-    private GameObject[][] _cubes;
-    private GameObject[] _ringsParents;
 
-    private void Start () {
-        _cubes = new GameObject[rings][];
-        _ringsParents = new GameObject[rings];
-        for (int i = 0; i < rings; i++) {
-            _ringsParents[i] = new GameObject();
-            _ringsParents[i].transform.parent = parent.transform;
-            _cubes[i] = new GameObject[Convert.ToInt32(Mathf.PI * (maxRadius - ((maxRadius-minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(rings-1f), 2)))) * xScale)];
-            for (int j = 0; j < _cubes[i].Length; j++) {
-                float angle = j * Mathf.PI * 2 / _cubes[i].Length;
+    public Ring[] rings;
+
+    private void Start ()
+    {
+        rings = new Ring[numberOfRings];
+        for (int i = 0; i < numberOfRings; i++)
+        {
+            rings[i] = new Ring
+            {
+                parent = new GameObject(),
+                cubes = new GameObject[Convert.ToInt32(
+                    Mathf.PI * (maxRadius - ((maxRadius - minRadius) *
+                                             Convert.ToSingle(Mathf.Log(1f + (i) / (numberOfRings - 1f), 2)))) *
+                    xScale)]
+            };
+            rings[i].parent.transform.parent = parent.transform;
+            for (int j = 0; j < rings[i].cubes.Length; j++) {
+                float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
                 Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) *
-                              (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(rings-1f), 2))));
+                              (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2))));
                 GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
-                tmp.transform.parent = _ringsParents[i].transform;
-                _cubes[i][j] = tmp;
+                tmp.transform.parent = rings[i].parent.transform;
+                rings[i].cubes[j] = tmp;
             }
         }
     }
@@ -44,20 +67,20 @@ public class AudioVisualizer : MonoBehaviour
     private void Update () {
         float[] spectrum = new float[range];
         src.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
-        for (int i = 0; i < rings; i++) {
-            for (int j = 0; j < _cubes[i].Length; j++) {
-                _cubes[i][j].transform.localScale = new Vector3(_cubes[i][j].transform.localScale.x, spectrum[(_cubes[i].Length*i) + j] * yScale * (topOnly ? 25 : 50), _cubes[i][j].transform.localScale.z);;
-                _cubes[i][j].transform.position = new Vector3(_cubes[i][j].transform.position.x, topOnly ? (spectrum[(_cubes[i].Length*i) + j] * yScale) * 12.5f : 0, _cubes[i][j].transform.position.z);
+        for (int i = 0; i < numberOfRings; i++) {
+            for (int j = 0; j < rings[i].cubes.Length; j++) {
+                rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 25 : 50), rings[i].cubes[j].transform.localScale.z);;
+                rings[i].cubes[j].transform.position = new Vector3(rings[i].cubes[j].transform.position.x, topOnly ? (spectrum[(rings[i].cubes.Length*i) + j] * yScale) * 12.5f : 0, rings[i].cubes[j].transform.position.z);
                 if (changeColor) {
-                    _cubes[i][j].GetComponent<Renderer>().material.SetColor("_Color", Color.HSVToRGB(0.67f-(spectrum[(_cubes[i].Length*i) + j]*4f), 1, 1));
+                    rings[i].cubes[j].GetComponent<Renderer>().material.SetColor("_Color", Color.HSVToRGB(0.67f-(spectrum[(rings[i].cubes.Length*i) + j]*4f), 1, 1));
                 }
             }
         }
 
-        for (int i = 0; i < rings; i++) {
-            _ringsParents[i].transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
-            for (int j = 0; j < _cubes[i].Length; j++) {
-                _cubes[i][j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);		
+        for (int i = 0; i < numberOfRings; i++) {
+            rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
+            for (int j = 0; j < rings[i].cubes.Length; j++) {
+                rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);		
             }
         }
     }
