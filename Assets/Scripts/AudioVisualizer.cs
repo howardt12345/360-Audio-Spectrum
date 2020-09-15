@@ -18,6 +18,16 @@ public class Ring
         this.parent = parent;
         this.cubes = cubes;
     }
+
+    public Ring(GameObject parent)
+    {
+        this.parent = parent;
+        this.cubes = new GameObject[parent.gameObject.transform.childCount];
+        for (int i = 0; i < cubes.Length; i++)
+        {
+            cubes[i] = parent.gameObject.transform.GetChild(i).gameObject;
+        }
+    }
 }
 
 public enum RingState 
@@ -38,6 +48,7 @@ public class AudioVisualizer : MonoBehaviour
     public GameObject parent;
     public AudioSource src;
     public bool generate = true;
+    [Separator]
     public RingState ringState = RingState.Single;
     [ConditionalField(nameof(ringState), false, RingState.Single)] 
     public float radius = 15f;
@@ -48,21 +59,43 @@ public class AudioVisualizer : MonoBehaviour
     [ConditionalField(nameof(ringState), false, RingState.Multiple)] 
     public float minRadius = 10f;
     
+    [Separator]
     public float yScale = 1f;
     public float xScale = 1f;
     public int range = 1024;
     public float ringRotateSpeed;
     public float rotateSpeed;
     public bool topOnly;
+    
+    [Separator]
     public ColorState changeColor;
-
     [ConditionalField(nameof(changeColor), false, ColorState.Hue), Min(0)]
     public float startingHue = 0.67f;
-
     [ConditionalField(nameof(changeColor), false, ColorState.Hue)]
     public float shiftFactor = -4f;
 
+    [Separator]
     public Ring[] rings;
+    #if UNITY_EDITOR
+    [ButtonMethod]
+    private string CollectCubes()
+    {
+        int total = 0;
+        for (int i = 0; i < rings.Length; i++)
+        {
+            if (rings[i].parent != null)
+            {
+                rings[i] = new Ring(rings[i].parent);
+                total++;
+            }
+            else
+            {
+                Debug.LogError("Parent at index " + i + " is null.");
+            }
+        }
+        return total + " cubes from " + rings.Length + " collected.";
+    }
+    #endif
 
     private void Start ()
     {
