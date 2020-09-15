@@ -61,7 +61,7 @@ public class AudioVisualizer : MonoBehaviour
     public float maxRadius = 20f;
     [ConditionalField(nameof(ringState), false, RingState.Multiple)] 
     public float minRadius = 10f;
-    
+
     [Separator]
     public float yScale = 1f;
     public float xScale = 1f;
@@ -99,6 +99,19 @@ public class AudioVisualizer : MonoBehaviour
         }
         return total + " cubes from " + rings.Length + " rings collected.";
     }
+    [ButtonMethod]
+    private void RegenerateCubes()
+    {
+        for (int i = 0; i < rings.Length; i++)
+        {
+            for (int j = 0; j < rings[i].cubes.Length; j++)
+            {
+                GameObject.Destroy(rings[i].cubes[j]);
+            }
+            GameObject.Destroy(rings[i].parent);
+        }
+        Generate();
+    }
     #endif
 
     private bool canRotate;
@@ -123,7 +136,6 @@ public class AudioVisualizer : MonoBehaviour
 
     private void Generate()
     {
-        
         int total = 0;
         rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
         for (int i = 0; i < rings.Length; i++)
