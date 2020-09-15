@@ -165,7 +165,7 @@ MonoBehaviour:
   topOnly: 0
   changeColor: 1
   startingHue: 7.31
-  shiftFactor: 4
+  shiftFactor: -4
   rings: []
 --- !u!4 &646161873
 Transform:

@@ -59,7 +59,7 @@ public class AudioVisualizer : MonoBehaviour
     public float startingHue = 0.67f;
 
     [ConditionalField("changeColor", false, ColorState.Hue)]
-    public float shiftFactor = 4f;
+    public float shiftFactor = -4f;
 
     public Ring[] rings;
 
@@ -102,7 +102,7 @@ public class AudioVisualizer : MonoBehaviour
                 if (changeColor == ColorState.Hue)
                 {
                     startingHue = Mathf.Clamp(startingHue, 0f, 1f);
-                    rings[i].cubes[j].GetComponent<Renderer>().material.SetColor("_Color", Color.HSVToRGB(Mathf.Clamp(startingHue-(spectrum[(rings[i].cubes.Length*i) + j]*shiftFactor), 0f, 1f), 1, 1));
+                    rings[i].cubes[j].GetComponent<Renderer>().material.SetColor("_Color", Color.HSVToRGB(Mathf.Clamp(startingHue+(spectrum[(rings[i].cubes.Length*i) + j]*shiftFactor), 0f, 1f), 1, 1));
                 }
             }
         }
