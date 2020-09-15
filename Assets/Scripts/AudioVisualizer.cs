@@ -132,6 +132,7 @@ public class AudioVisualizer : MonoBehaviour
         src.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
         for (int i = 0; i < rings.Length; i++) 
         {
+            rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
             for (int j = 0; j < rings[i].cubes.Length; j++) 
             {
                 rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 25 : 50), rings[i].cubes[j].transform.localScale.z);;
@@ -141,15 +142,7 @@ public class AudioVisualizer : MonoBehaviour
                     startingHue = Mathf.Clamp(startingHue, 0f, 1f);
                     rings[i].cubes[j].GetComponent<Renderer>().material.SetColor("_Color", Color.HSVToRGB(Mathf.Clamp(startingHue+(spectrum[(rings[i].cubes.Length*i) + j]*shiftFactor), 0f, 1f), 1, 1));
                 }
-            }
-        }
-
-        for (int i = 0; i < rings.Length; i++) 
-        {
-            rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
-            for (int j = 0; j < rings[i].cubes.Length; j++) 
-            {
-                rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);		
+                rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
             }
         }
     }
