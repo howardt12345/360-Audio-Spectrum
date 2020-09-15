@@ -109,7 +109,8 @@ public class AudioVisualizer : MonoBehaviour
                 rings[i] = new Ring
                 {
                     parent = new GameObject(),
-                    cubes = new GameObject[ringState == RingState.Single 
+                    cubes = new GameObject[
+                        ringState == RingState.Single 
                         ? Convert.ToInt32(Mathf.PI * radius * xScale)
                         : Convert.ToInt32(Mathf.PI * (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i) / (numberOfRings - 1f), 2)))) * xScale)
                     ]
