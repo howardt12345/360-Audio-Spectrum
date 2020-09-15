@@ -119,7 +119,10 @@ public class AudioVisualizer : MonoBehaviour
                 {
                     float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
                     Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) 
-                                  * (ringState == RingState.Single ? radius : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2)))));
+                      * (ringState == RingState.Single 
+                          ? radius 
+                          : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2))))
+                      );
                     GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
                     tmp.transform.parent = rings[i].parent.transform;
                     rings[i].cubes[j] = tmp;
