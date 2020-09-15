@@ -101,6 +101,7 @@ public class AudioVisualizer : MonoBehaviour
     {
         if (generate)
         {
+            int total = 0;
             rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
             for (int i = 0; i < rings.Length; i++)
             {
@@ -122,7 +123,9 @@ public class AudioVisualizer : MonoBehaviour
                     tmp.transform.parent = rings[i].parent.transform;
                     rings[i].cubes[j] = tmp;
                 }
+                total += rings[i].cubes.Length;
             }
+            Debug.Log(rings.Length + " rings generated. " + total + " cubes generated. ");
         }
     }
 

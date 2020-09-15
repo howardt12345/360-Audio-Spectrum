@@ -155,7 +155,7 @@ MonoBehaviour:
   generate: 1
   ringState: 1
   radius: 15
-  numberOfRings: 4
+  numberOfRings: 5
   maxRadius: 25
   minRadius: 10
   yScale: 1.5
