@@ -62,6 +62,7 @@ public class AudioVisualizer : MonoBehaviour
     [Separator]
     public float yScale = 1f;
     public float xScale = 1f;
+    [DefinedValues(64, 128, 256, 512, 1024, 2048, 4096, 8192)]
     public int range = 1024;
     public float ringRotateSpeed;
     public float rotateSpeed;
@@ -129,7 +130,7 @@ public class AudioVisualizer : MonoBehaviour
         }
     }
 
-    private void Update () 
+    private void FixedUpdate () 
     {
         float[] spectrum = new float[range];
         src.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
