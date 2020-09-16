@@ -22,7 +22,7 @@ public class Ring
     public Ring(GameObject parent)
     {
         this.parent = parent;
-        this.cubes = new GameObject[parent.gameObject.transform.childCount];
+        cubes = new GameObject[parent.gameObject.transform.childCount];
         for (int i = 0; i < cubes.Length; i++)
         {
             cubes[i] = parent.gameObject.transform.GetChild(i).gameObject;
@@ -75,6 +75,8 @@ public class AudioVisualizer : MonoBehaviour
     
     [Separator]
     public ColorState changeColor;
+    [ConditionalField(nameof(changeColor), false, ColorState.Hue, ColorState.Saturation)]
+    public bool updateOnRuntime;
     [ConditionalField(nameof(changeColor), false, ColorState.Hue), Min(0)]
     public float startingHue = 0.67f;
     [ConditionalField(nameof(changeColor), false, ColorState.Hue)]
@@ -198,11 +200,15 @@ public class AudioVisualizer : MonoBehaviour
             {
                 rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 2 : 4), rings[i].cubes[j].transform.localScale.z);;
                 rings[i].cubes[j].transform.position = new Vector3(rings[i].cubes[j].transform.position.x, topOnly ? (spectrum[(rings[i].cubes.Length*i) + j] * yScale) : 0, rings[i].cubes[j].transform.position.z);
-                /*if (changeColor == ColorState.Hue)
+                if (updateOnRuntime)
                 {
-                    startingHue = Mathf.Clamp(startingHue, 0f, 1f);
-                    rings[i].cubes[j].GetComponent<Renderer>().material.SetColor("_Color", Color.HSVToRGB(Mathf.Clamp(startingHue+(spectrum[(rings[i].cubes.Length*i) + j]*shiftFactor), 0f, 1f), 1, 1));
-                } */
+                    ColorChange cubeColor = rings[i].cubes[j].GetComponent<ColorChange>();
+                    cubeColor.changeColor = changeColor;
+                    cubeColor.yScale = yScale;
+                    cubeColor.startingHue = startingHue;
+                    cubeColor.shiftFactor = shiftFactor;
+                    cubeColor.topOnly = topOnly;
+                }
                 if(_canRotate)
                     rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
             }
