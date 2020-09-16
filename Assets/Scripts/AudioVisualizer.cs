@@ -51,6 +51,8 @@ public class AudioVisualizer : MonoBehaviour
     [ConditionalField(nameof(startAudioWithDelay))]
     public int delay = 2;
     public bool generate = true;
+    [ConditionalField(nameof(generate))] 
+    public bool addAnimationRecorder = true;
     [Separator]
     public RingState ringState = RingState.Single;
     [ConditionalField(nameof(ringState), false, RingState.Single)] 
@@ -63,7 +65,7 @@ public class AudioVisualizer : MonoBehaviour
     public float minRadius = 10f;
 
     [Separator]
-    public float yScale = 1f;
+    public float yScale = 20f;
     public float xScale = 1f;
     [DefinedValues(64, 128, 256, 512, 1024, 2048, 4096, 8192)]
     public int range = 1024;
@@ -150,6 +152,9 @@ public class AudioVisualizer : MonoBehaviour
                 ]
             };
             rings[i].parent.transform.parent = parent.transform;
+            rings[i].parent.gameObject.name = "Ring " + i;
+            if(addAnimationRecorder)
+                rings[i].parent.AddComponent<UnityAnimationRecorder>();
             for (int j = 0; j < rings[i].cubes.Length; j++) 
             {
                 float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
@@ -160,6 +165,13 @@ public class AudioVisualizer : MonoBehaviour
                               );
                 GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
                 tmp.transform.parent = rings[i].parent.transform;
+                tmp.gameObject.name = "Ring " + i + " Cube " + j;
+                tmp.AddComponent<ColorChange>();
+                tmp.GetComponent<ColorChange>().changeColor = changeColor;
+                tmp.GetComponent<ColorChange>().yScale = yScale;
+                tmp.GetComponent<ColorChange>().startingHue = startingHue;
+                tmp.GetComponent<ColorChange>().shiftFactor = shiftFactor;
+                tmp.GetComponent<ColorChange>().topOnly = topOnly;
                 rings[i].cubes[j] = tmp;
             }
             total += rings[i].cubes.Length;
@@ -174,7 +186,7 @@ public class AudioVisualizer : MonoBehaviour
         _canRotate = true;
     }
 
-    private void FixedUpdate () 
+    private void Update () 
     {
         float[] spectrum = new float[range];
         audioSource.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
@@ -184,13 +196,13 @@ public class AudioVisualizer : MonoBehaviour
                 rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
             for (int j = 0; j < rings[i].cubes.Length; j++) 
             {
-                rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 25 : 50), rings[i].cubes[j].transform.localScale.z);;
-                rings[i].cubes[j].transform.position = new Vector3(rings[i].cubes[j].transform.position.x, topOnly ? (spectrum[(rings[i].cubes.Length*i) + j] * yScale) * 12.5f : 0, rings[i].cubes[j].transform.position.z);
-                if (changeColor == ColorState.Hue)
+                rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 2 : 4), rings[i].cubes[j].transform.localScale.z);;
+                rings[i].cubes[j].transform.position = new Vector3(rings[i].cubes[j].transform.position.x, topOnly ? (spectrum[(rings[i].cubes.Length*i) + j] * yScale) : 0, rings[i].cubes[j].transform.position.z);
+                /*if (changeColor == ColorState.Hue)
                 {
                     startingHue = Mathf.Clamp(startingHue, 0f, 1f);
                     rings[i].cubes[j].GetComponent<Renderer>().material.SetColor("_Color", Color.HSVToRGB(Mathf.Clamp(startingHue+(spectrum[(rings[i].cubes.Length*i) + j]*shiftFactor), 0f, 1f), 1, 1));
-                }
+                } */
                 if(_canRotate)
                     rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
             }
