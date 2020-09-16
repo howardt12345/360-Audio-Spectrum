@@ -207,6 +207,11 @@ PrefabInstance:
       propertyPath: fileName
       value: Ring 1-Animation.anim
       objectReference: {fileID: 0}
+    - target: {fileID: 1172263700541171719, guid: 889cb062dfca35348817c9ce2b1a68ce,
+        type: 3}
+      propertyPath: recordOnStart
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1180882138806567095, guid: 889cb062dfca35348817c9ce2b1a68ce,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -650,7 +655,7 @@ PrefabInstance:
     - target: {fileID: 7814620065993833395, guid: 889cb062dfca35348817c9ce2b1a68ce,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8056545304354034557, guid: 889cb062dfca35348817c9ce2b1a68ce,
         type: 3}
@@ -719,6 +724,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 7626522c40f5bd7498f2eb7b57ef0ce9, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 889cb062dfca35348817c9ce2b1a68ce, type: 3}
+--- !u!1 &181604415 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7814620065993833395, guid: 889cb062dfca35348817c9ce2b1a68ce,
+    type: 3}
+  m_PrefabInstance: {fileID: 181604414}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &646161871
 GameObject:
   m_ObjectHideFlags: 0
@@ -753,7 +764,7 @@ MonoBehaviour:
   audioSource: {fileID: 1201981928}
   startAudioWithDelay: 1
   delay: 1
-  generate: 1
+  generate: 0
   addAnimationRecorder: 1
   ringState: 1
   radius: 15
@@ -767,9 +778,18 @@ MonoBehaviour:
   rotateSpeed: 5
   topOnly: 0
   changeColor: 1
+  updateOnRuntime: 0
   startingHue: 0.67
   shiftFactor: -4
-  rings: []
+  rings:
+  - parent: {fileID: 892083913}
+    cubes: []
+  - parent: {fileID: 181604415}
+    cubes: []
+  - parent: {fileID: 1706318269}
+    cubes: []
+  - parent: {fileID: 951355783}
+    cubes: []
 --- !u!4 &646161873
 Transform:
   m_ObjectHideFlags: 0
@@ -1612,6 +1632,11 @@ PrefabInstance:
       propertyPath: fileName
       value: Ring 0-Animation.anim
       objectReference: {fileID: 0}
+    - target: {fileID: 8463448000049992835, guid: e4139d34d65f52e4692e5f3018ad2863,
+        type: 3}
+      propertyPath: recordOnStart
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8506749823584061530, guid: e4139d34d65f52e4692e5f3018ad2863,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -1635,7 +1660,7 @@ PrefabInstance:
     - target: {fileID: 8624235614455648199, guid: e4139d34d65f52e4692e5f3018ad2863,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8814684656447882700, guid: e4139d34d65f52e4692e5f3018ad2863,
         type: 3}
@@ -1674,6 +1699,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 7626522c40f5bd7498f2eb7b57ef0ce9, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4139d34d65f52e4692e5f3018ad2863, type: 3}
+--- !u!1 &892083913 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8624235614455648199, guid: e4139d34d65f52e4692e5f3018ad2863,
+    type: 3}
+  m_PrefabInstance: {fileID: 892083912}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &951355782
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1735,6 +1766,11 @@ PrefabInstance:
         type: 3}
       propertyPath: fileName
       value: Ring 3-Animation.anim
+      objectReference: {fileID: 0}
+    - target: {fileID: 1250478244786615742, guid: ce6a50f5369a85b439cebc105e83e0c8,
+        type: 3}
+      propertyPath: recordOnStart
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1512406228959967958, guid: ce6a50f5369a85b439cebc105e83e0c8,
         type: 3}
@@ -1809,7 +1845,7 @@ PrefabInstance:
     - target: {fileID: 1756387542198899823, guid: ce6a50f5369a85b439cebc105e83e0c8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1810840569638435547, guid: ce6a50f5369a85b439cebc105e83e0c8,
         type: 3}
@@ -1998,6 +2034,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 7626522c40f5bd7498f2eb7b57ef0ce9, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce6a50f5369a85b439cebc105e83e0c8, type: 3}
+--- !u!1 &951355783 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1756387542198899823, guid: ce6a50f5369a85b439cebc105e83e0c8,
+    type: 3}
+  m_PrefabInstance: {fileID: 951355782}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -2387,6 +2429,11 @@ PrefabInstance:
       propertyPath: fileName
       value: Ring 2-Animation.anim
       objectReference: {fileID: 0}
+    - target: {fileID: 1614081575095706841, guid: 6c52867c6ff49a441903f4966869bcc0,
+        type: 3}
+      propertyPath: recordOnStart
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1723694410097551535, guid: 6c52867c6ff49a441903f4966869bcc0,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2600,7 +2647,7 @@ PrefabInstance:
     - target: {fileID: 5645668630849271606, guid: 6c52867c6ff49a441903f4966869bcc0,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5686247923141345418, guid: 6c52867c6ff49a441903f4966869bcc0,
         type: 3}
@@ -2744,3 +2791,9 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 7626522c40f5bd7498f2eb7b57ef0ce9, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6c52867c6ff49a441903f4966869bcc0, type: 3}
+--- !u!1 &1706318269 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5645668630849271606, guid: 6c52867c6ff49a441903f4966869bcc0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1706318268}
+  m_PrefabAsset: {fileID: 0}

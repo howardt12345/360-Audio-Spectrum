@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using MyBox;
 
 public class UnityAnimationRecorder : MonoBehaviour {
 
@@ -8,6 +9,8 @@ public class UnityAnimationRecorder : MonoBehaviour {
 	public string savePath;
 	public string fileName;
 
+	public bool recordOnStart;
+	[ConditionalField(nameof(recordOnStart), true)]
 	public KeyCode startRecordKey = KeyCode.Q;
 	public KeyCode stopRecordKey = KeyCode.W;
 
@@ -31,7 +34,7 @@ public class UnityAnimationRecorder : MonoBehaviour {
 	float nowTime = 0.0f;
 
 	// Use this for initialization
-	void Start () {
+	private void Start () {
 		recordObjs = gameObject.GetComponentsInChildren<Transform> ();
 		objRecorders = new UnityObjectAnimation[recordObjs.Length];
 
@@ -42,21 +45,19 @@ public class UnityAnimationRecorder : MonoBehaviour {
 
 		if (changeTimeScale)
 			Time.timeScale = timeScaleOnStart;
+		if (recordOnStart)
+			StartRecording();
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
-		if (Input.GetKeyDown (startRecordKey)) {
-			StartRecording ();
+	private void Update () {
+		if (Input.GetKeyDown (startRecordKey) && !recordOnStart) {
+			StartRecording();
 		}
 
 		if (Input.GetKeyDown (stopRecordKey)) {
-			StopRecording ();
+			StopRecording();
 		}
-
-		
-
 	}
 
 	public void StartRecording () {
