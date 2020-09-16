@@ -1360,7 +1360,7 @@ GameObject:
   - component: {fileID: 646161873}
   - component: {fileID: 646161872}
   m_Layer: 0
-  m_Name: Audio Visualizer
+  m_Name: Audio Visualizer Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1400,6 +1400,7 @@ MonoBehaviour:
   updateOnRuntime: 0
   startingHue: 0.67
   shiftFactor: -4
+  audioVisualizerParent: {fileID: 699538379}
   rings:
   - parent: {fileID: 892083913}
     cubes:

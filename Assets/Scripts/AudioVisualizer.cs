@@ -82,23 +82,36 @@ public class AudioVisualizer : MonoBehaviour
     [ConditionalField(nameof(changeColor), false, ColorState.Hue)]
     public float shiftFactor = -4f;
 
-    [Separator]
+    [Separator] 
+    public GameObject audioVisualizerParent;
     public Ring[] rings;
     #if UNITY_EDITOR
     [ButtonMethod]
     private string CollectCubes()
     {
         int total = 0;
-        for (int i = 0; i < rings.Length; i++)
+        if (audioVisualizerParent != null)
         {
-            if (rings[i].parent != null)
+            rings = new Ring[audioVisualizerParent.gameObject.transform.childCount];
+            for (int i = 0; i < rings.Length; i++)
             {
-                rings[i] = new Ring(rings[i].parent);
+                rings[i] = new Ring(audioVisualizerParent.gameObject.transform.GetChild(i).gameObject);
                 total += rings[i].cubes.Length;
             }
-            else
+        }
+        else
+        {
+            for (int i = 0; i < rings.Length; i++)
             {
-                Debug.LogError("Parent at index " + i + " is null.");
+                if (rings[i].parent != null)
+                {
+                    rings[i] = new Ring(rings[i].parent);
+                    total += rings[i].cubes.Length;
+                }
+                else
+                {
+                    Debug.LogError("Parent at index " + i + " is null.");
+                }
             }
         }
         return total + " cubes from " + rings.Length + " rings collected.";
@@ -123,14 +136,10 @@ public class AudioVisualizer : MonoBehaviour
     private void Start ()
     {
         if (generate)
-        {
             Generate();
-        }
-
+        
         if (startAudioWithDelay)
-        {
             StartCoroutine(PlaySoundAfterDelay());
-        }
         else
         {
             audioSource.Play();
@@ -141,9 +150,23 @@ public class AudioVisualizer : MonoBehaviour
     private void Generate()
     {
         int total = 0;
+        
+        //Instantiate Parent object
+        GameObject p = new GameObject();
+        p.gameObject.transform.position = parent.transform.position;
+        p.gameObject.transform.rotation = parent.transform.rotation;
+        p.gameObject.transform.localScale = parent.transform.localScale;
+        p.gameObject.name = "Audio Visualizer";
+        audioVisualizerParent = p;
+        if(addAnimationRecorder)
+            p.AddComponent<UnityAnimationRecorder>();
+        
+        //Initialize Rings
         rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
+        
         for (int i = 0; i < rings.Length; i++)
         {
+            //Create new Ring
             rings[i] = new Ring
             {
                 parent = new GameObject(),
@@ -153,27 +176,22 @@ public class AudioVisualizer : MonoBehaviour
                         : Convert.ToInt32(Mathf.PI * (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i) / (numberOfRings - 1f), 2)))) * xScale)
                 ]
             };
+            //Set Ring Property
             rings[i].parent.transform.parent = parent.transform;
             rings[i].parent.gameObject.name = "Ring " + i;
-            if(addAnimationRecorder)
-                rings[i].parent.AddComponent<UnityAnimationRecorder>();
             for (int j = 0; j < rings[i].cubes.Length; j++) 
             {
                 float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
                 Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) 
-                              * (ringState == RingState.Single 
-                                  ? radius 
-                                  : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2))))
-                              );
+                      * (ringState == RingState.Single 
+                          ? radius 
+                          : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2))))
+                      );
                 GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
                 tmp.transform.parent = rings[i].parent.transform;
                 tmp.gameObject.name = "Ring " + i + " Cube " + j;
                 tmp.AddComponent<ColorChange>();
-                tmp.GetComponent<ColorChange>().changeColor = changeColor;
-                tmp.GetComponent<ColorChange>().yScale = yScale;
-                tmp.GetComponent<ColorChange>().startingHue = startingHue;
-                tmp.GetComponent<ColorChange>().shiftFactor = shiftFactor;
-                tmp.GetComponent<ColorChange>().topOnly = topOnly;
+                UpdateColor(tmp.GetComponent<ColorChange>());
                 rings[i].cubes[j] = tmp;
             }
             total += rings[i].cubes.Length;
@@ -203,15 +221,20 @@ public class AudioVisualizer : MonoBehaviour
                 if (updateOnRuntime)
                 {
                     ColorChange cubeColor = rings[i].cubes[j].GetComponent<ColorChange>();
-                    cubeColor.changeColor = changeColor;
-                    cubeColor.yScale = yScale;
-                    cubeColor.startingHue = startingHue;
-                    cubeColor.shiftFactor = shiftFactor;
-                    cubeColor.topOnly = topOnly;
+                    UpdateColor(cubeColor);
                 }
                 if(_canRotate)
                     rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
             }
         }
+    }
+
+    private void UpdateColor(ColorChange cubeColor)
+    {
+        cubeColor.changeColor = changeColor;
+        cubeColor.yScale = yScale;
+        cubeColor.startingHue = startingHue;
+        cubeColor.shiftFactor = shiftFactor;
+        cubeColor.topOnly = topOnly;
     }
 }
