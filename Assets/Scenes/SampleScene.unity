@@ -1383,7 +1383,7 @@ MonoBehaviour:
   audioSource: {fileID: 1201981928}
   startAudioWithDelay: 1
   delay: 1
-  generate: 0
+  generate: 1
   addAnimationRecorder: 1
   ringState: 1
   radius: 15
@@ -1802,7 +1802,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &699538380
 MonoBehaviour:
   m_ObjectHideFlags: 0

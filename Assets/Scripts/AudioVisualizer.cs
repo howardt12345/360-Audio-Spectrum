@@ -153,6 +153,7 @@ public class AudioVisualizer : MonoBehaviour
         
         //Instantiate Parent object
         GameObject p = new GameObject();
+        //Set parent properties
         p.gameObject.transform.position = parent.transform.position;
         p.gameObject.transform.rotation = parent.transform.rotation;
         p.gameObject.transform.localScale = parent.transform.localScale;
@@ -177,21 +178,27 @@ public class AudioVisualizer : MonoBehaviour
                 ]
             };
             //Set Ring Property
-            rings[i].parent.transform.parent = parent.transform;
+            rings[i].parent.transform.parent = p.transform;
             rings[i].parent.gameObject.name = "Ring " + i;
+            //Initialize the cubes in the ring
             for (int j = 0; j < rings[i].cubes.Length; j++) 
             {
+                //Calculate the location that the cube will
                 float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
                 Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) 
-                      * (ringState == RingState.Single 
-                          ? radius 
-                          : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2))))
-                      );
+                  * (ringState == RingState.Single 
+                      ? radius 
+                      : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2))))
+                  );
+                //Instantiate cube from prefab
                 GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
+                //Set cube property
                 tmp.transform.parent = rings[i].parent.transform;
                 tmp.gameObject.name = "Ring " + i + " Cube " + j;
+                //Add color change component
                 tmp.AddComponent<ColorChange>();
                 UpdateColor(tmp.GetComponent<ColorChange>());
+                //Add to list
                 rings[i].cubes[j] = tmp;
             }
             total += rings[i].cubes.Length;
