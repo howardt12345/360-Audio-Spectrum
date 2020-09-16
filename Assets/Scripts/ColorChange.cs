@@ -22,7 +22,7 @@ public class ColorChange : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (changeColor == ColorState.Hue)
         {
