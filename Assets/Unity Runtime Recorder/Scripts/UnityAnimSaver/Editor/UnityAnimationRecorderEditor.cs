@@ -9,6 +9,7 @@ public class UnityAnimationRecorderEditor : Editor {
 	SerializedProperty savePath;
 	SerializedProperty fileName;
 
+	SerializedProperty recordOnStart;
 	SerializedProperty startRecordKey;
 	SerializedProperty stopRecordKey;
 
@@ -30,6 +31,7 @@ public class UnityAnimationRecorderEditor : Editor {
 		savePath = serializedObject.FindProperty ("savePath");
 		fileName = serializedObject.FindProperty ("fileName");
 
+		recordOnStart = serializedObject.FindProperty("recordOnStart");
 		startRecordKey = serializedObject.FindProperty ("startRecordKey");
 		stopRecordKey = serializedObject.FindProperty ("stopRecordKey");
 
@@ -73,6 +75,7 @@ public class UnityAnimationRecorderEditor : Editor {
 
 		// keys setting
 		EditorGUILayout.LabelField( "== Control Keys ==" );
+		EditorGUILayout.PropertyField (recordOnStart);
 		EditorGUILayout.PropertyField (startRecordKey);
 		EditorGUILayout.PropertyField (stopRecordKey);
 
