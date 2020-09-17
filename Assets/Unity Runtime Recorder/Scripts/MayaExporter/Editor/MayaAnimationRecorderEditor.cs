@@ -18,8 +18,15 @@ public class MayaAnimationRecorderEditor : Editor {
 
 	SerializedProperty showDebugGUI;
 
+	SerializedProperty recordPosition;
+	SerializedProperty recordRotation;
+	SerializedProperty recordScale;
+
+
 	SerializedProperty recordLimitFrames;
 	SerializedProperty recordFrames;
+
+	SerializedProperty includePathName;
 
 	void OnEnable () {
 
@@ -36,9 +43,15 @@ public class MayaAnimationRecorderEditor : Editor {
 
 		showDebugGUI = serializedObject.FindProperty ("showLogGUI");
 
+		recordPosition = serializedObject.FindProperty ("recordPosition");
+		recordRotation = serializedObject.FindProperty ("recordRotation");
+		recordScale = serializedObject.FindProperty ("recordScale");
+
+
 		recordLimitFrames = serializedObject.FindProperty ("recordLimitFrames");
 		recordFrames = serializedObject.FindProperty ("recordFrames");
 
+		includePathName = serializedObject.FindProperty ("includePathName");
 	}
 
 	public override void OnInspectorGUI () {
@@ -64,6 +77,15 @@ public class MayaAnimationRecorderEditor : Editor {
 		EditorGUILayout.PropertyField (saveFileName);
 
 		EditorGUILayout.Space ();
+
+		// record setting
+		EditorGUILayout.LabelField( "== Record Setting ==" );
+		recordPosition.boolValue = EditorGUILayout.Toggle ("Record Position", recordPosition.boolValue);
+		recordRotation.boolValue = EditorGUILayout.Toggle ("Record Rotation", recordRotation.boolValue);
+		recordScale.boolValue = EditorGUILayout.Toggle ("Record Scale", recordScale.boolValue);
+
+		EditorGUILayout.Space ();
+
 
 		// keys setting
 		EditorGUILayout.LabelField( "== Control Keys ==" );
@@ -91,6 +113,7 @@ public class MayaAnimationRecorderEditor : Editor {
 		if (recordLimitFrames.boolValue)
 			EditorGUILayout.PropertyField (recordFrames);
 
+		includePathName.boolValue = EditorGUILayout.Toggle ("Include Path Name", includePathName.boolValue);
 		serializedObject.ApplyModifiedProperties ();
 
 		//DrawDefaultInspector ();

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class MayaAnimationRecorder : MonoBehaviour {
 
 	Transform[] observeObjs;
-	ObjAnimationContainer[] objAnims;
+	MayaNodeDataContainer[] objAnims;
 
 	// the folder path
 	public string saveFolderPath;
@@ -23,6 +23,14 @@ public class MayaAnimationRecorder : MonoBehaviour {
 	public bool changeTimeScale = false;
 	public float startGameWithTimeScale = 0.0f;
 	public float startRecordWithTimeScale = 1.0f;
+
+	// data record settings
+	public bool recordPosition = true;
+	public bool recordRotation = true;
+	public bool recordScale = true;
+
+	// save path name or not
+	public bool includePathName = false;
 
 	public bool showLogGUI = false;
 	string logMessage = "";
@@ -56,13 +64,20 @@ public class MayaAnimationRecorder : MonoBehaviour {
 
 		// get all record objs
 		observeObjs = gameObject.GetComponentsInChildren<Transform> ();
-		objAnims = new ObjAnimationContainer[ observeObjs.Length ];
+		objAnims = new MayaNodeDataContainer[ observeObjs.Length ];
 
 		objNums = objAnims.Length;
 
 		for (int i=0; i< observeObjs.Length; i++) {
-			string namePath = AnimationRecorderHelper.GetTransformPathName (transform, observeObjs [i]);
-			objAnims[i] = new ObjAnimationContainer( observeObjs[i], namePath, saveFolderPath, true, true, true );
+
+			string namePath = observeObjs [i].name;
+
+			// if there are some nodes with same names, include path
+			if (includePathName) {
+				namePath = AnimationRecorderHelper.GetTransformPathName (transform, observeObjs [i]);
+				Debug.Log ("get name: " + namePath);
+			}
+			objAnims[i] = new MayaNodeDataContainer( observeObjs[i], namePath, saveFolderPath, recordPosition, recordRotation, recordScale );
 		}
 
 		ShowLog ("Setting complete");
@@ -103,7 +118,7 @@ public class MayaAnimationRecorder : MonoBehaviour {
 
 
 	// Update is called once per frame
-	void FixedUpdate () {
+	void LateUpdate () {
 
 		if( isStart )
 		{
@@ -142,19 +157,18 @@ public class MayaAnimationRecorder : MonoBehaviour {
 
 	IEnumerator EndRecord () {
 
-		ShowLog ("Terminating Anim Recorders ...");
-		// finish recording
-		for (int i=0; i< objAnims.Length; i++)
-		{
-			objAnims [i].EndRecord ();
+		ShowLog ("Writing Anim Data into Files ...");
 
-			if( i % processPerFrame == 0 )
-				yield return 0;
+		for (int i = 0; i < objAnims.Length; i++) {
+			objAnims [i].WriteIntoFile ();
+
+			// prevent lag
+			if (i % 10 == 0)
+				yield return null;
 		}
-
+		
 		// save into ma file
 		StartCoroutine ("exportToMayaAnimation");
-
 	}
 
 
@@ -162,14 +176,30 @@ public class MayaAnimationRecorder : MonoBehaviour {
 
 		// duplicate originalMaFile
 		string newFilePath = saveFolderPath + saveFileName;
+
+		/* 2017-09-26
+		 * 
+		 * set all spines' Joint Orient to (0,0,0)
+		 * this can prevent SkinnedMesh animation export fail
+		 * 
+		 */
+		ShowLog ("Adjusting Spine Joint Orient Values ...");
+
+		string maFileData = File.ReadAllText (originalMaFilePath);
+		maFileData = System.Text.RegularExpressions.Regex.Replace (
+			maFileData, 
+			"\".jo\" -type \"double3\" [^ ]* [^ ]* [^ ]*", 
+			"\".jo\" -type \"double3\" 0 0 0"
+		);
+
+
+		// Combine ma file with animation data
+		ShowLog ("Combining File into one ...");
+
 		StreamWriter writer = new StreamWriter ( newFilePath );
 
-		// read from original ma file
-		StreamReader maReader = new StreamReader ( originalMaFilePath );
-		writer.Write (maReader.ReadToEnd ());
-		maReader.Close ();
-
-		ShowLog ("Combining File into one ...");
+		// write ma file
+		writer.Write (maFileData);
 
 		// copy all file content into one single ma file
 		for( int i=0; i< objAnims.Length; i++ )

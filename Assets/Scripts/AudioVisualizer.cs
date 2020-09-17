@@ -47,9 +47,6 @@ public class AudioVisualizer : MonoBehaviour
     public GameObject prefab;
     public GameObject parent;
     public AudioSource audioSource;
-    public bool startAudioWithDelay;
-    [ConditionalField(nameof(startAudioWithDelay))]
-    public int delay = 2;
     public bool generate = true;
     [ConditionalField(nameof(generate))] 
     public bool addAnimationRecorder = true;
@@ -129,22 +126,18 @@ public class AudioVisualizer : MonoBehaviour
         }
         Generate();
     }
-    #endif
 
-    private bool _canRotate;
+    [ButtonMethod]
+    private void ResetRings()
+    {
+        rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
+    }
+    #endif
 
     private void Start ()
     {
         if (generate)
             Generate();
-        
-        if (startAudioWithDelay)
-            StartCoroutine(PlaySoundAfterDelay());
-        else
-        {
-            audioSource.Play();
-            _canRotate = true;
-        }
     }
 
     private void Generate()
@@ -205,22 +198,14 @@ public class AudioVisualizer : MonoBehaviour
         }
         Debug.Log(rings.Length + " rings generated. " + total + " cubes generated. ");
     }
-    
-    private IEnumerator PlaySoundAfterDelay()
-    {
-        yield return new WaitForSeconds(delay);
-        audioSource.Play();
-        _canRotate = true;
-    }
 
-    private void Update () 
+    private void FixedUpdate () 
     {
         float[] spectrum = new float[range];
         audioSource.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
         for (int i = 0; i < rings.Length; i++) 
         {
-            if(_canRotate)
-                rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
+            rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
             for (int j = 0; j < rings[i].cubes.Length; j++) 
             {
                 rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 2 : 4), rings[i].cubes[j].transform.localScale.z);;
@@ -230,8 +215,7 @@ public class AudioVisualizer : MonoBehaviour
                     ColorChange cubeColor = rings[i].cubes[j].GetComponent<ColorChange>();
                     UpdateColor(cubeColor);
                 }
-                if(_canRotate)
-                    rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
+                rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
             }
         }
     }
