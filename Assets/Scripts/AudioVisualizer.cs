@@ -66,6 +66,8 @@ public class AudioVisualizer : MonoBehaviour
     public float xScale = 1f;
     [DefinedValues(64, 128, 256, 512, 1024, 2048, 4096, 8192)]
     public int range = 1024;
+    public int updateSpeed = 480;
+    public bool rotate;
     public float ringRotateSpeed;
     public float rotateSpeed;
     public bool topOnly;
@@ -199,25 +201,42 @@ public class AudioVisualizer : MonoBehaviour
         Debug.Log(rings.Length + " rings generated. " + total + " cubes generated. ");
     }
 
-    private void FixedUpdate () 
+    private void Update () 
     {
         float[] spectrum = new float[range];
         audioSource.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
         for (int i = 0; i < rings.Length; i++) 
         {
-            rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
-            for (int j = 0; j < rings[i].cubes.Length; j++) 
+            if (rotate) rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
+            for (int j = 0; j < rings[i].cubes.Length; j++)
             {
-                rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 2 : 4), rings[i].cubes[j].transform.localScale.z);;
-                rings[i].cubes[j].transform.position = new Vector3(rings[i].cubes[j].transform.position.x, topOnly ? (spectrum[(rings[i].cubes.Length*i) + j] * yScale) : 0, rings[i].cubes[j].transform.position.z);
+                Vector3 prevScale = rings[i].cubes[j].transform.localScale;
+                prevScale.y = Mathf.Lerp(prevScale.y, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 2 : 4), Time.deltaTime * updateSpeed);
+                rings[i].cubes[j].transform.localScale = prevScale;
+
+                if (topOnly)
+                {
+                    Vector3 prevPosition = rings[i].cubes[j].transform.position;
+                    prevPosition.y = Mathf.Lerp(prevPosition.y, (spectrum[(rings[i].cubes.Length*i) + j] * yScale), Time.deltaTime * updateSpeed);
+                    rings[i].cubes[j].transform.position = prevPosition;
+                }
+                
+                //rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 2 : 4), rings[i].cubes[j].transform.localScale.z);;
+                //rings[i].cubes[j].transform.position = new Vector3(rings[i].cubes[j].transform.position.x, topOnly ? (spectrum[(rings[i].cubes.Length*i) + j] * yScale) : 0, rings[i].cubes[j].transform.position.z);
                 if (updateOnRuntime)
                 {
                     ColorChange cubeColor = rings[i].cubes[j].GetComponent<ColorChange>();
                     UpdateColor(cubeColor);
                 }
-                rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
+                if (rotate) rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);	
             }
         }
+    }
+
+    private void AddAnimationRecorder(GameObject g, string path)
+    {
+        g.AddComponent<UnityAnimationRecorder>();
+        g.GetComponent<UnityAnimationRecorder>().changeTimeScale = true;
     }
 
     private void UpdateColor(ColorChange cubeColor)

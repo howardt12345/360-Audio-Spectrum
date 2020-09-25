@@ -2,165 +2,198 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
+using System.Collections.Generic;
 
-public class UnityAnimationRecorder : MonoBehaviour
-{
-    // save file path
-    public string savePath;
-    public string fileName;
+public class UnityAnimationRecorder : MonoBehaviour {
 
-    public KeyCode startRecordKey = KeyCode.Q;
-    public KeyCode stopRecordKey = KeyCode.W;
+	// save file path
+	public string savePath;
+	public string fileName;
 
-    // options
-    public bool showLogGUI = false;
-    string logMessage = "";
+	// use it when save multiple files
+	int fileIndex = 0;
 
-    public bool recordLimitedFrames = false;
-    public int recordFrames = 1000;
-    int frameIndex = 0;
+	public KeyCode startRecordKey = KeyCode.Q;
+	public KeyCode stopRecordKey = KeyCode.W;
 
-    public bool changeTimeScale = false;
-    public float timeScaleOnStart = 0.0f;
-    public float timeScaleOnRecord = 1.0f;
-    public float frameDelta = 0.033f;
+	// options
+	public bool showLogGUI = false;
+	string logMessage = "";
 
-    Transform[] recordObjs;
-    UnityObjectAnimation[] objRecorders;
+	public bool recordLimitedFrames = false;
+	public int recordFrames = 1000;
+	int frameIndex = 0;
 
-    bool isStart = false;
-    float nowTime = 0.0f;
-    private float timeDelta = 0.0f;
+	public bool changeTimeScale = false;
+	public float timeScaleOnStart = 0.0f;
+	public float timeScaleOnRecord = 1.0f;
 
-    // Use this for initialization
-    void Start()
-    {
-        recordObjs = gameObject.GetComponentsInChildren<Transform>();
-        objRecorders = new UnityObjectAnimation[recordObjs.Length];
+	public bool recordBlendShape = false;
 
-        for (int i = 0; i < recordObjs.Length; i++)
-        {
-            string path = AnimationRecorderHelper.GetTransformPathName(transform, recordObjs[i]);
-            objRecorders[i] = new UnityObjectAnimation(path, recordObjs[i]);
-        }
 
-        if (changeTimeScale)
-            Time.timeScale = timeScaleOnStart;
-    }
+	Transform[] recordObjs;
+	SkinnedMeshRenderer[] blendShapeObjs;
+	UnityObjectAnimation[] objRecorders;
+	List<UnityBlendShapeAnimation> blendShapeRecorders;
 
-    // Update is called once per frame
-    void Update()
-    {
+	bool isStart = false;
+	float nowTime = 0.0f;
 
-        if (Input.GetKeyDown(startRecordKey))
-        {
-            StartRecording();
-        }
+	// Use this for initialization
+	void Start () {
+		SetupRecorders ();
 
-        if (Input.GetKeyDown(stopRecordKey))
-        {
-            StopRecording();
-        }
+	}
 
-        if (isStart)
-        {
-            nowTime += Time.deltaTime;
-            timeDelta += Time.deltaTime;
+	void SetupRecorders () {
+		recordObjs = gameObject.GetComponentsInChildren<Transform> ();
+		objRecorders = new UnityObjectAnimation[recordObjs.Length];
+		blendShapeRecorders = new List<UnityBlendShapeAnimation> ();
 
-            if (timeDelta < frameDelta)
-            {
-                return;
-            }
-            else
-            {
-                timeDelta = 0.0f;
-            }
+		frameIndex = 0;
+		nowTime = 0.0f;
 
-            for (int i = 0; i < objRecorders.Length; i++)
-            {
-                objRecorders[i].AddFrame(nowTime);
-            }
-        }
-    }
+		for (int i = 0; i < recordObjs.Length; i++) {
+			string path = AnimationRecorderHelper.GetTransformPathName (transform, recordObjs [i]);
+			objRecorders [i] = new UnityObjectAnimation ( path, recordObjs [i]);
 
-    public void StartRecording()
-    {
-        CustomDebug("Start Recorder");
-        isStart = true;
-        Time.timeScale = timeScaleOnRecord;
-    }
-    
-    public void StopRecording()
-    {
-        CustomDebug("End Record, generating .anim file");
-        isStart = false;
-        ExportAnimationClip();
-    }
+			// check if theres blendShape
+			if (recordBlendShape) {
+				if (recordObjs [i].GetComponent<SkinnedMeshRenderer> ()) {
+					SkinnedMeshRenderer tempSkinMeshRenderer = recordObjs [i].GetComponent<SkinnedMeshRenderer> ();
 
-    void FixedUpdate()
-    {
-        if (isStart)
-        {
-            if (timeDelta < frameDelta)
-            {
-                return;
-            }
-            else
-            {
-                timeDelta = 0.0f;
-            }
+					// there is blendShape exist
+					if (tempSkinMeshRenderer.sharedMesh.blendShapeCount > 0) {
+						blendShapeRecorders.Add (new UnityBlendShapeAnimation (path, tempSkinMeshRenderer));
+					}
+				}
+			}
+		}
 
-            if (frameIndex < recordFrames)
-            {
-                for (int i = 0; i < objRecorders.Length; i++)
-                {
-                    objRecorders[i].AddFrame(nowTime);
-                }
+		if (changeTimeScale)
+			Time.timeScale = timeScaleOnStart;
+	}
+	
+	// Update is called once per frame
+	void Update () {
+	
+		if (Input.GetKeyDown (startRecordKey)) {
+			StartRecording ();
+		}
 
-                ++frameIndex;
-            }
-            else
-            {
-                isStart = false;
-                ExportAnimationClip();
-                CustomDebug("Recording Finish, generating .anim file");
-            }
-        }
-    }
+		if (Input.GetKeyDown (stopRecordKey)) {
+			StopRecording ();
+		}
 
-    void OnGUI()
-    {
-        if (showLogGUI)
-            GUILayout.Label(logMessage);
-    }
+		if (isStart) {
+			nowTime += Time.deltaTime;
 
-    void ExportAnimationClip()
-    {
-        string exportFilePath = savePath + fileName;
+			for (int i = 0; i < objRecorders.Length; i++) {
+				objRecorders [i].AddFrame (nowTime);
+			}
 
-        AnimationClip clip = new AnimationClip();
-        clip.name = fileName;
+			if (recordBlendShape) {
+				for (int i = 0; i < blendShapeRecorders.Count; i++) {
+					blendShapeRecorders [i].AddFrame (nowTime);
+				}
+			}
+		}
 
-        for (int i = 0; i < objRecorders.Length; i++)
-        {
-            UnityCurveContainer[] curves = objRecorders[i].curves;
+	}
 
-            for (int x = 0; x < curves.Length; x++)
-            {
-                clip.SetCurve(objRecorders[i].pathName, typeof(Transform), curves[x].propertyName, curves[x].animCurve);
-            }
-        }
-        //clip.EnsureQuaternionContinuity();
-        AssetDatabase.CreateAsset(clip, exportFilePath);
-        CustomDebug(".anim file generated to " + exportFilePath);
-    }
+	public void StartRecording () {
+		CustomDebug ("Start Recorder");
+		isStart = true;
+		Time.timeScale = timeScaleOnRecord;
+	}
 
-    void CustomDebug(string message)
-    {
-        if (showLogGUI)
-            logMessage = message;
-        else
-            Debug.Log(message);
-    }
+
+	public void StopRecording () {
+		CustomDebug ("End Record, generating .anim file");
+		isStart = false;
+
+		ExportAnimationClip ();
+		ResetRecorder ();
+	}
+
+	void ResetRecorder () {
+		SetupRecorders ();
+	}
+
+
+	void FixedUpdate () {
+
+		if (isStart) {
+
+			if (recordLimitedFrames) {
+				if (frameIndex < recordFrames) {
+					for (int i = 0; i < objRecorders.Length; i++) {
+						objRecorders [i].AddFrame (nowTime);
+					}
+
+					++frameIndex;
+				}
+				else {
+					isStart = false;
+					ExportAnimationClip ();
+					CustomDebug ("Recording Finish, generating .anim file");
+				}
+			}
+
+		}
+	}
+
+	void OnGUI () {
+		if (showLogGUI)
+			GUILayout.Label (logMessage);
+	}
+
+	void ExportAnimationClip () {
+
+		string exportFilePath = savePath + fileName;
+
+		// if record multiple files when run
+		if (fileIndex != 0)
+			exportFilePath += "-" + fileIndex + ".anim";
+		else
+			exportFilePath += ".anim";
+
+
+		AnimationClip clip = new AnimationClip ();
+		clip.name = fileName;
+
+		for (int i = 0; i < objRecorders.Length; i++) {
+			UnityCurveContainer[] curves = objRecorders [i].curves;
+
+			for (int x = 0; x < curves.Length; x++) {
+				clip.SetCurve (objRecorders [i].pathName, typeof(Transform), curves [x].propertyName, curves [x].animCurve);
+			}
+		}
+
+		if (recordBlendShape) {
+			for (int i = 0; i < blendShapeRecorders.Count; i++) {
+
+				UnityCurveContainer[] curves = blendShapeRecorders [i].curves;
+
+				for (int x = 0; x < curves.Length; x++) {
+					clip.SetCurve (blendShapeRecorders [i].pathName, typeof(SkinnedMeshRenderer), curves [x].propertyName, curves [x].animCurve);
+				}
+				
+			}
+		}
+
+		//clip.EnsureQuaternionContinuity ();
+		AssetDatabase.CreateAsset ( clip, exportFilePath );
+
+		CustomDebug (".anim file generated to " + exportFilePath);
+		fileIndex++;
+	}
+
+	void CustomDebug ( string message ) {
+		if (showLogGUI)
+			logMessage = message;
+		else
+			Debug.Log (message);
+	}
 }
 #endif

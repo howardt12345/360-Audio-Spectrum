@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.4465782, g: 0.49641252, b: 0.5748167, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -163,6 +163,8 @@ MonoBehaviour:
   yScale: 20
   xScale: 1.5
   range: 2048
+  updateSpeed: 60
+  rotate: 0
   ringRotateSpeed: 0.25
   rotateSpeed: 5
   topOnly: 0
@@ -907,7 +909,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 39855fad36b60d346a12ba1f2473e6ca, type: 3}
+  m_audioClip: {fileID: 8300000, guid: adf1ec6833b2f74459f150934ddd533f, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -1267,6 +1269,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Audio Visualizer
+      objectReference: {fileID: 0}
+    - target: {fileID: 1141942274210669225, guid: d73af001bf2132d4cb3a495f7b6da9e6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1155217823960810680, guid: d73af001bf2132d4cb3a495f7b6da9e6,
         type: 3}
@@ -1666,12 +1673,12 @@ PrefabInstance:
     - target: {fileID: 2901997364214356465, guid: d73af001bf2132d4cb3a495f7b6da9e6,
         type: 3}
       propertyPath: fileName
-      value: Audio Visualizer-Animation-2.anim
+      value: Audio Visualizer-Animation.anim
       objectReference: {fileID: 0}
     - target: {fileID: 2901997364214356465, guid: d73af001bf2132d4cb3a495f7b6da9e6,
         type: 3}
       propertyPath: recordLimitedFrames
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2901997364214356465, guid: d73af001bf2132d4cb3a495f7b6da9e6,
         type: 3}
@@ -1681,7 +1688,7 @@ PrefabInstance:
     - target: {fileID: 2901997364214356465, guid: d73af001bf2132d4cb3a495f7b6da9e6,
         type: 3}
       propertyPath: frameDelta
-      value: 0.05
+      value: 0.033
       objectReference: {fileID: 0}
     - target: {fileID: 2901997364214356465, guid: d73af001bf2132d4cb3a495f7b6da9e6,
         type: 3}
@@ -2923,8 +2930,7 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7626522c40f5bd7498f2eb7b57ef0ce9, type: 2}
-    m_RemovedComponents:
-    - {fileID: 2901997364214356465, guid: d73af001bf2132d4cb3a495f7b6da9e6, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d73af001bf2132d4cb3a495f7b6da9e6, type: 3}
 --- !u!1 &1933561510 stripped
 GameObject:
@@ -5128,22 +5134,3 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1933561509}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &1933561877
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1933561510}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: aab3fcbc600b8ea4d9d44b07c40fc367, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
