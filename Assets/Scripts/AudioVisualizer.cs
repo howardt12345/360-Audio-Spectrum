@@ -130,6 +130,7 @@ public class AudioVisualizer : MonoBehaviour
     [ButtonMethod]
     private void ResetRings()
     {
+        parent = audioVisualizerParent;
         rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
     }
 
