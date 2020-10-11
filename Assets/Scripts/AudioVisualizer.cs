@@ -1,8 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using UnityEngine.Serialization;
 using MyBox;
 
 [Serializable]
@@ -44,13 +41,14 @@ public enum ColorState
 
 public class AudioVisualizer : MonoBehaviour
 {
+    #region Variables
     public GameObject prefab;
     public GameObject parent;
     public AudioSource audioSource;
     
-    public bool generate = true;
+    public bool generate = false;
     [ConditionalField(nameof(generate))] 
-    public bool addAnimationRecorder = true;
+    public bool addAnimationRecorder = false;
     
     [Separator]
     public RingState ringState = RingState.Single;
@@ -75,17 +73,22 @@ public class AudioVisualizer : MonoBehaviour
     public bool topOnly;
     
     [Separator]
-    public ColorState changeColor;
-    [ConditionalField(nameof(changeColor), false, ColorState.Hue, ColorState.Saturation)]
+    public bool changeColor = false;
+    [ConditionalField(nameof(changeColor))]
     public bool updateOnRuntime;
-    [ConditionalField(nameof(changeColor), false, ColorState.Hue), Min(0)]
-    public float startingHue = 0.67f;
-    [ConditionalField(nameof(changeColor), false, ColorState.Hue)]
-    public float shiftFactor = -4f;
+    [ConditionalField(nameof(changeColor))]
+    public float shiftFactor = 1f;
+    [ConditionalField(nameof(changeColor))]
+    public Gradient gradient;
 
     [Separator] 
     public GameObject audioVisualizerParent;
     public Ring[] rings;
+    
+    #endregion
+    
+    #region Button Methods
+    
     #if UNITY_EDITOR
     [ButtonMethod]
     private string CollectCubes()
@@ -130,12 +133,6 @@ public class AudioVisualizer : MonoBehaviour
         rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
     }
     #endif
-
-    private void Start ()
-    {
-        if (generate)
-            Generate();
-    }
 
     private void Generate()
     {
@@ -192,6 +189,14 @@ public class AudioVisualizer : MonoBehaviour
         }
         Debug.Log(rings.Length + " rings generated. " + total + " cubes generated. ");
     }
+    
+    #endregion
+    
+    private void Start ()
+    {
+        if (generate)
+            Generate();
+    }
 
     private void Update () 
     {
@@ -241,9 +246,9 @@ public class AudioVisualizer : MonoBehaviour
 
     private void UpdateColor(ColorChange cubeColor)
     {
+        cubeColor.gradient = gradient;
         cubeColor.changeColor = changeColor;
         cubeColor.yScale = yScale;
-        cubeColor.startingHue = startingHue;
         cubeColor.shiftFactor = shiftFactor;
         cubeColor.topOnly = topOnly;
     }
