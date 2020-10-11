@@ -47,9 +47,11 @@ public class AudioVisualizer : MonoBehaviour
     public GameObject prefab;
     public GameObject parent;
     public AudioSource audioSource;
+    
     public bool generate = true;
     [ConditionalField(nameof(generate))] 
     public bool addAnimationRecorder = true;
+    
     [Separator]
     public RingState ringState = RingState.Single;
     [ConditionalField(nameof(ringState), false, RingState.Single)] 
@@ -118,14 +120,7 @@ public class AudioVisualizer : MonoBehaviour
     [ButtonMethod]
     private void RegenerateCubes()
     {
-        for (int i = 0; i < rings.Length; i++)
-        {
-            for (int j = 0; j < rings[i].cubes.Length; j++)
-            {
-                Destroy(rings[i].cubes[j]);
-            }
-            Destroy(rings[i].parent);
-        }
+        DestroyImmediate(audioVisualizerParent);
         Generate();
     }
 
@@ -213,9 +208,15 @@ public class AudioVisualizer : MonoBehaviour
 
                 if (topOnly)
                 {
-                    Vector3 prevPosition = rings[i].cubes[j].transform.position;
+                    Vector3 prevPosition = rings[i].cubes[j].transform.localPosition;
                     prevPosition.y = Mathf.Lerp(prevPosition.y, (spectrum[(rings[i].cubes.Length*i) + j] * yScale), Time.deltaTime * updateSpeed);
-                    rings[i].cubes[j].transform.position = prevPosition;
+                    rings[i].cubes[j].transform.localPosition = prevPosition;
+                }
+                else
+                {
+                    Vector3 prevPosition = rings[i].cubes[j].transform.localPosition;
+                    prevPosition.y = 0;
+                    rings[i].cubes[j].transform.localPosition = prevPosition;
                 }
                 
                 //rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 2 : 4), rings[i].cubes[j].transform.localScale.z);;
