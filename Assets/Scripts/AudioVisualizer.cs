@@ -162,15 +162,15 @@ public class AudioVisualizer : MonoBehaviour
         
         for (int i = 0; i < rings.Length; i++)
         {
+            //Calculate the current radius
+            float r = ringState == RingState.Single
+                ? radius
+                : maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + i / (numberOfRings - 1f), 2)));
             //Create new Ring
             rings[i] = new Ring
             {
                 parent = new GameObject(),
-                cubes = new GameObject[
-                    ringState == RingState.Single 
-                        ? Convert.ToInt32(Mathf.PI * radius * xScale)
-                        : Convert.ToInt32(Mathf.PI * (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i) / (numberOfRings - 1f), 2)))) * xScale)
-                ]
+                cubes = new GameObject[Convert.ToInt32(Mathf.PI * r * xScale)]
             };
             //Set Ring Property
             rings[i].parent.transform.parent = p.transform;
@@ -178,15 +178,12 @@ public class AudioVisualizer : MonoBehaviour
             //Initialize the cubes in the ring
             for (int j = 0; j < rings[i].cubes.Length; j++) 
             {
-                //Calculate the location that the cube will
+                //Calculate the location that the cube will be
                 float angle = j * Mathf.PI * 2 / rings[i].cubes.Length;
-                Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) 
-                  * (ringState == RingState.Single 
-                      ? radius 
-                      : (maxRadius - ((maxRadius - minRadius) * Convert.ToSingle(Mathf.Log(1f + (i)/(numberOfRings-1f), 2))))
-                  );
+                Vector3 pos = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * r;
                 //Instantiate cube from prefab
                 GameObject tmp = Instantiate(prefab, pos, Quaternion.identity);
+                tmp.transform.Rotate(0, (-angle) * Mathf.Rad2Deg, 0);
                 //Set cube property
                 tmp.transform.parent = rings[i].parent.transform;
                 tmp.gameObject.name = "Ring " + i + " Cube " + j;
