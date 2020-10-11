@@ -132,7 +132,71 @@ public class AudioVisualizer : MonoBehaviour
     {
         rings = new Ring[ringState == RingState.Single ? 1 : numberOfRings];
     }
+
+    [ButtonMethod]
+    private string applyColorChangeSettings()
+    {
+        int total = 0;
+        for (int i = 0; i < rings.Length; i++)
+        {
+            for (int j = 0; j < rings[i].cubes.Length; j++)
+            {
+                ColorChange cubeColor = rings[i].cubes[j].GetComponent<ColorChange>();
+                UpdateColor(cubeColor);
+                total++;
+            } 
+        }
+        return "Updated color change settings of " + total + " cubes from " + rings.Length + " rings collected.";
+    }
     #endif
+
+    #endregion
+    
+    private void Start ()
+    {
+        if (generate)
+            Generate();
+    }
+
+    private void Update () 
+    {
+        float[] spectrum = new float[range];
+        audioSource.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
+        int x = 0;
+        for (int i = 0; i < rings.Length; i++) 
+        {
+            if (rotate) rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
+            for (int j = 0; j < rings[i].cubes.Length; j++)
+            {
+                Vector3 prevScale = rings[i].cubes[j].transform.localScale;
+                prevScale.y = Mathf.Lerp(prevScale.y, spectrum[x] * yScale * (topOnly ? 2 : 4), Time.deltaTime * updateSpeed);
+                rings[i].cubes[j].transform.localScale = prevScale;
+
+                if (topOnly)
+                {
+                    Vector3 prevPosition = rings[i].cubes[j].transform.localPosition;
+                    prevPosition.y = Mathf.Lerp(prevPosition.y, (spectrum[x] * yScale), Time.deltaTime * updateSpeed);
+                    rings[i].cubes[j].transform.localPosition = prevPosition;
+                }
+                else
+                {
+                    Vector3 prevPosition = rings[i].cubes[j].transform.localPosition;
+                    prevPosition.y = 0;
+                    rings[i].cubes[j].transform.localPosition = prevPosition;
+                }
+                
+                //rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 2 : 4), rings[i].cubes[j].transform.localScale.z);;
+                //rings[i].cubes[j].transform.position = new Vector3(rings[i].cubes[j].transform.position.x, topOnly ? (spectrum[(rings[i].cubes.Length*i) + j] * yScale) : 0, rings[i].cubes[j].transform.position.z);
+                if (updateOnRuntime)
+                {
+                    ColorChange cubeColor = rings[i].cubes[j].GetComponent<ColorChange>();
+                    UpdateColor(cubeColor);
+                }
+                if (rotate) rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);
+                x++;
+            }
+        }
+    }
 
     private void Generate()
     {
@@ -188,54 +252,6 @@ public class AudioVisualizer : MonoBehaviour
             total += rings[i].cubes.Length;
         }
         Debug.Log(rings.Length + " rings generated. " + total + " cubes generated. ");
-    }
-    
-    #endregion
-    
-    private void Start ()
-    {
-        if (generate)
-            Generate();
-    }
-
-    private void Update () 
-    {
-        float[] spectrum = new float[range];
-        audioSource.GetSpectrumData (spectrum, 0, FFTWindow.Hanning);
-        int x = 0;
-        for (int i = 0; i < rings.Length; i++) 
-        {
-            if (rotate) rings[i].parent.transform.Rotate(0, (i % 2 == 0 ? ringRotateSpeed : -ringRotateSpeed), 0);
-            for (int j = 0; j < rings[i].cubes.Length; j++)
-            {
-                Vector3 prevScale = rings[i].cubes[j].transform.localScale;
-                prevScale.y = Mathf.Lerp(prevScale.y, spectrum[x] * yScale * (topOnly ? 2 : 4), Time.deltaTime * updateSpeed);
-                rings[i].cubes[j].transform.localScale = prevScale;
-
-                if (topOnly)
-                {
-                    Vector3 prevPosition = rings[i].cubes[j].transform.localPosition;
-                    prevPosition.y = Mathf.Lerp(prevPosition.y, (spectrum[x] * yScale), Time.deltaTime * updateSpeed);
-                    rings[i].cubes[j].transform.localPosition = prevPosition;
-                }
-                else
-                {
-                    Vector3 prevPosition = rings[i].cubes[j].transform.localPosition;
-                    prevPosition.y = 0;
-                    rings[i].cubes[j].transform.localPosition = prevPosition;
-                }
-                
-                //rings[i].cubes[j].transform.localScale = new Vector3(rings[i].cubes[j].transform.localScale.x, spectrum[(rings[i].cubes.Length*i) + j] * yScale * (topOnly ? 2 : 4), rings[i].cubes[j].transform.localScale.z);;
-                //rings[i].cubes[j].transform.position = new Vector3(rings[i].cubes[j].transform.position.x, topOnly ? (spectrum[(rings[i].cubes.Length*i) + j] * yScale) : 0, rings[i].cubes[j].transform.position.z);
-                if (updateOnRuntime)
-                {
-                    ColorChange cubeColor = rings[i].cubes[j].GetComponent<ColorChange>();
-                    UpdateColor(cubeColor);
-                }
-                if (rotate) rings[i].cubes[j].transform.Rotate (0, (i % 2 == 0 ? rotateSpeed : -rotateSpeed), 0);
-                x++;
-            }
-        }
     }
 
     private void AddAnimationRecorder(GameObject g, string path)
