@@ -325,7 +325,7 @@ namespace AuraAPI
         /// </summary>
         private void DisplayShapeSettingsArea()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
 
             GUILayout.Button(new GUIContent(" Volume Shape", volumeShapeIconTexture), GuiStyles.areaTitleBarStyle);
             GuiHelpers.DrawContextualHelpBox("The \"Shape\" parameter allows you to define the volumetric shape of the volume used for injecting Density, Color or Anisotropy.\n\nYou will also be able to parameter the fading on the borders of the shape, allowing a smooth transition between the inside and the outside of the volume.");
@@ -396,7 +396,7 @@ namespace AuraAPI
         /// </summary>
         private void DisplayTextureMaskArea()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
             GUILayout.Button(new GUIContent(" Texture Mask", textureMaskIconTexture), GuiStyles.areaTitleBarStyle);
             GuiHelpers.DrawContextualHelpBox("The \"Texture Mask\" parameter allows you to assign a volumetric texture mask to the volume.\nThis texture will be used for masking the data injected.\n\nThe channels of the texture are used as followed :\nRGB -> Will multiply the \"Strength\" parameter of the Color Injection.\nA -> Will multiply the \"Strength\" parameter of the Density and Anisotropy Injection.");
             EditorGUILayout.BeginVertical();
@@ -450,7 +450,7 @@ namespace AuraAPI
         /// </summary>
         private void DisplayNoiseMaskArea()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
             GUILayout.Button(new GUIContent(" Noise Mask", noiseMaskIconTexture), GuiStyles.areaTitleBarStyle);
             GuiHelpers.DrawContextualHelpBox("The \"Noise Mask\" parameter allows you to assign a dynamic morphing noise mask to the volume.\nThis noise will be used for masking the data injected.");
             EditorGUILayout.BeginVertical();
@@ -488,7 +488,7 @@ namespace AuraAPI
         /// </summary>
         private void DisplayDensityInjectionTab()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
 
             GUILayout.Button(new GUIContent(" Density Injection", injectionIconTexture), GuiStyles.areaTitleBarStyle);
             GuiHelpers.DrawContextualHelpBox("The \"Density Injection\" parameters allows you to add/remove density inside the system.\n\nIn other words, you will be able to increase/decrease the amount of micro particles inside a defined area.\n TIP :The \"Strength\" parameter will accept negative values. Meaning that you will be able to remove Density, Color or Anisotropy as well.");
@@ -522,7 +522,7 @@ namespace AuraAPI
         /// </summary>
         private void DisplayColorInjectionTab()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
             GUILayout.Button(new GUIContent(" Color Injection", injectionIconTexture), GuiStyles.areaTitleBarStyle);
             GuiHelpers.DrawContextualHelpBox("The \"Color Injection\" parameters allows you to add/remove color inside the system.\n\nIn other words, you will be able to add/remove light inside a defined area.\n TIP :The \"Strength\" parameter will accept negative values. Meaning that you will be able to remove Color.");
             EditorGUILayout.BeginVertical();
@@ -557,7 +557,7 @@ namespace AuraAPI
         /// </summary>
         private void DisplayAnisotropyInjectionTab()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
             GUILayout.Button(new GUIContent(" Anisotropy Injection", injectionIconTexture), GuiStyles.areaTitleBarStyle);
             GuiHelpers.DrawContextualHelpBox("The \"Anisotropy Injection\" parameters allows you to add/remove anisotropy inside the system.\n\nIn other words, you will be able to modify how light from light sources will bounce inside the micro particles and will be deviated by them. Typically, how \"wet\" the micro particles are.\n TIP :The \"Strength\" parameter will accept negative values. Meaning that you will be able to remove Anisotropy as well.");
 

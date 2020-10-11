@@ -230,7 +230,7 @@ namespace AuraAPI
         /// </summary>
         private void DisplayBaseInjectionArea()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
 
             GUILayout.Button(new GUIContent(" Ambient Injection", injectionIconTexture), GuiStyles.areaTitleBarStyle);
             GuiHelpers.DrawContextualHelpBox("The \"Ambient Injection\" parameters set the starting Density, Color and Anisotropy of the environment.");
@@ -266,7 +266,7 @@ namespace AuraAPI
         /// </summary>
         private void DisplaySettingsTab()
         {
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
             GUILayout.Button(new GUIContent(" Grid", gridIconTexture), GuiStyles.areaTitleBarStyle);
             GuiHelpers.DrawContextualHelpBox("The \"Grid\" parameters allow you to determine the density of cells used to compute the volumetric lighting.\n\nThis cubic grid will be remapped on the frustum (the volume visible to the camera) and will range from the camera's near clip distance to the \"Range\" distance parameter (for performance saving and because behind a certain distance, changes are barely noticeable).");
 
@@ -298,7 +298,7 @@ namespace AuraAPI
 
             EditorGUILayout.Separator();
 
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
             GUILayout.Button(new GUIContent(" Contibution", injectionContributionIconTexture), GuiStyles.areaTitleBarStyle);
             GuiHelpers.DrawContextualHelpBox("The \"Selective Contribution\" parameters allow you to enable/disable what type of contribution will be allowed to be computed.\n\nNote that the existence of the different contributions are handled by the system at runtime.");
 
@@ -351,7 +351,7 @@ namespace AuraAPI
 
             EditorGUILayout.Separator();
 
-            EditorGUILayout.BeginVertical(EditorStyles.miniButton);
+            EditorGUILayout.BeginVertical();
             GUILayout.Button(new GUIContent(" Experimental Features", experimentalFeaturesIconTexture), GuiStyles.areaTitleBarStyle);
             EditorGUILayout.HelpBox("\nATTENTION : \n\nThe following features are still at experimental stage.\n\nThis means that, although stable, they can lead to visual artifacts.\n\nFeel free to contact me if you have any comment about them.\n", MessageType.Warning);
 
