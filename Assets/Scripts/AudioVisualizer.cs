@@ -42,6 +42,7 @@ public enum ColorState
 public class AudioVisualizer : MonoBehaviour
 {
     #region Variables
+    
     public GameObject prefab;
     public GameObject parent;
     public AudioSource audioSource;
@@ -152,7 +153,9 @@ public class AudioVisualizer : MonoBehaviour
     #endif
 
     #endregion
-    
+
+    #region Runtime Functions
+
     private void Start ()
     {
         if (generate)
@@ -198,6 +201,10 @@ public class AudioVisualizer : MonoBehaviour
             }
         }
     }
+    
+    #endregion
+    
+    #region Functions
 
     private void Generate()
     {
@@ -269,4 +276,6 @@ public class AudioVisualizer : MonoBehaviour
         cubeColor.shiftFactor = shiftFactor;
         cubeColor.topOnly = topOnly;
     }
+    
+    #endregion
 }
