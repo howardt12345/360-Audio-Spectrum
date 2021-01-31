@@ -1,4 +1,6 @@
-﻿
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using MyBox;
 
@@ -7,8 +9,8 @@ public class ColorChange : MonoBehaviour
     public bool changeColor;
     public float yScale = 20f;
     public bool topOnly;
-    [ConditionalField(nameof(changeColor)), Min(0f)]
-    public float shiftFactor = 1f;
+
+    public float value;
 
     public Gradient gradient;
 
@@ -24,7 +26,9 @@ public class ColorChange : MonoBehaviour
     {
         if (changeColor)
         {
-            _renderer.material.SetColor("_Color", gradient.Evaluate(Mathf.Clamp((gameObject.transform.localScale.y/yScale/(topOnly ? 1 : 2))*shiftFactor, 0f, 1f)));
+            value = Mathf.Clamp(
+                this.gameObject.transform.localScale.y / yScale / (topOnly ? 1 : 2), 0f, 1f);
+            _renderer.material.SetColor("_Color", gradient.Evaluate(value));
         }
     }
-}
+} //comment
