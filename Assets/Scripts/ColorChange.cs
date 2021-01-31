@@ -31,4 +31,4 @@ public class ColorChange : MonoBehaviour
             _renderer.material.SetColor("_Color", gradient.Evaluate(value));
         }
     }
-} //comment
+} 
