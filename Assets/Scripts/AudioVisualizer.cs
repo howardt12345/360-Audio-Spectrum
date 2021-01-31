@@ -158,7 +158,7 @@ public class AudioVisualizer : MonoBehaviour
     private void Start ()
     {
         if (generate)
-            Generate(); 
+            Generate(); //Test
     }
 
     private void Generate()
